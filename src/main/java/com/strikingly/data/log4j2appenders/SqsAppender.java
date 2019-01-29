@@ -21,18 +21,15 @@ public class SqsAppender extends AbstractAppender {
   private static AmazonSQS sqsClient;
   private static String sqsUrl = null;
 
-  /* 构造函数 */
   public SqsAppender(String name, Filter filter, Layout<? extends Serializable> layout, boolean ignoreExceptions) {
     super(name, filter, layout, ignoreExceptions);
   }
 
   @Override
   public void append(LogEvent event) {
-//        System.out.println("serializable: " + getLayout().toSerializable(event).toString());
     sqsClient.sendMessage(new SendMessageRequest(sqsUrl, getLayout().toSerializable(event).toString()));
   }
 
-  /*  接收配置文件中的参数 */
   @PluginFactory
   public static SqsAppender createAppender(@PluginAttribute("name") String name,
                                            @PluginAttribute("QueueName") String queueName,
@@ -56,11 +53,6 @@ public class SqsAppender extends AbstractAppender {
     } catch (Exception exp) {
       LOGGER.error("SQS name error", exp);
     }
-
     return new SqsAppender(name, filter, layout, ignoreExceptions);
-  }
-
-  public static void main(String[] args) {
-    // do nothing
   }
 }
